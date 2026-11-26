@@ -145,6 +145,16 @@
   table.sched th,table.sched td{border-bottom:1px solid var(--line);padding:10px 6px;text-align:center;vertical-align:top}
   table.sched thead th{color:var(--muted);font-weight:700;font-size:13px;border-bottom:1px solid var(--wire)}
   .m .fnote{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;color:var(--gold);border:1px dashed var(--gold);border-radius:6px;padding:1px 6px}
+  .m .tnote{display:inline-block;max-width:100%;margin:5px 0 0;overflow-wrap:anywhere;font-size:11px;font-weight:700;color:#c2410c;background:#fff4ed;border:1px solid #fed7aa;border-radius:6px;padding:1px 6px;word-break:keep-all}
+  .tchg{font-size:12px;font-weight:700;color:#c2410c}
+  .notice{border:1px solid #fed7aa;background:#fff7f0;border-radius:14px;padding:16px 18px;margin:0 0 16px}
+  .notice h2{margin:0 0 10px;font-size:16px;font-weight:800;color:#9a3412}
+  .notice .slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:10px}
+  .notice .slot-box{background:#fff;border:1px solid #fde3cf;border-radius:10px;padding:10px 12px}
+  .notice .slot-box b{display:block;font-size:14px;margin-bottom:4px}
+  .notice .slot-box b span{color:var(--primary);font-weight:700;font-variant-numeric:tabular-nums}
+  .notice ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.65;color:#3f3f46}
+  .notice .slot-box ul{padding-left:16px}
   table.sched tbody tr:last-child th,table.sched tbody tr:last-child td{border-bottom:0}
   table.sched tbody th{color:var(--ink);font-weight:800;white-space:nowrap;vertical-align:middle;width:104px;text-align:left;padding-left:4px}
   table.sched tbody th small{display:block;font-weight:600;color:var(--muted);font-size:12px;margin-top:2px}
@@ -231,7 +241,7 @@
     @page{size:A4 landscape;margin:12mm}
     body{background:#fff}
     header{padding:0 0 8px}
-    .tabs,.toolbar .right,.warn,footer{display:none!important}
+    .tabs,.toolbar .right,.warn,footer,.notice{display:none!important}
     .sched-card{margin-top:0}
     .sched-wrap{overflow:visible}
     main{margin:0;max-width:none;padding:0}
@@ -252,6 +262,28 @@
 </header>
 
 <main>
+  <!-- 11월 27일(금) 변경 시간표 공지 — 2026-11-26 사용자 지시. 11월 28일부터 자동으로 숨김 -->
+  <section class="notice" id="notice-1127">
+    <h2>📢 11월 27일(금) 변경 경기 시간표</h2>
+    <div class="slots">
+      <div class="slot-box"><b>1타임 <span>11:30~11:50</span></b>
+        <ul><li>2학년 결승 (9경기 · 3판 2승): 7반 vs 9반 — 1타임부터 연속 진행</li><li>1학년 9경기: 3반 vs 6반</li></ul></div>
+      <div class="slot-box"><b>2타임 <span>11:55~12:15</span></b>
+        <ul><li>2학년 결승 (9경기 · 3판 2승): 7반 vs 9반 — 1타임부터 이어서 진행</li><li>1학년 10경기: 4반 vs 7반</li></ul></div>
+    </div>
+    <ul>
+      <li>2학년 결승전은 충분한 경기 시간 확보를 위해 1타임(11:30)에 시작하여 경기 종료 시까지 연속으로 진행됩니다.</li>
+      <li>1학년 경기는 기존 1타임 동시 진행에서 1타임(3반 vs 6반)과 2타임(4반 vs 7반)으로 나누어 진행됩니다.</li>
+      <li>원활한 진행을 위해 출전 반은 경기 시작 5분 전까지 경기장으로 모여주시기 바랍니다.</li>
+    </ul>
+  </section>
+  <script>
+    (function(){ // 한국 시간 11월 28일 0시 이후 숨김
+      if (Date.now() >= Date.UTC(2026, 10, 27, 15, 0, 0)) {
+        var n = document.getElementById("notice-1127"); if (n) n.style.display = "none";
+      }
+    })();
+  </script>
   <div class="tabs" role="tablist">
     <button class="tab active" data-g="g1">1학년</button>
     <button class="tab" data-g="g2">2학년</button>
@@ -568,6 +600,11 @@ var OWNER_EMAIL = "jungang2620920@onedu.jje.go.kr";
   var START_DATE = new Date(2026, 10, 23), PER_DAY = 2;
   var FINAL_DATE = { g1: new Date(2026, 10, 30), g2: new Date(2026, 10, 27) };
   var FINAL_NOTE = {};   // 결승 시간 메모 (예: { g1: "시간 미정" }). 1학년 결승은 1타임으로 확정 — 2026-11-17 사용자 지시
+  // 경기별 시간 변경 메모 — 11월 27일(금) 변경 시간표, 2026-11-26 사용자 지시
+  var GAME_NOTE = {
+    g1: { 9: "1타임 11:30~11:50", 10: "2타임 11:55~12:15" },
+    g2: { 9: "1타임 11:30부터 연속 진행" }
+  };
   var WEEK = ["일","월","화","수","목","금","토"];
 
   // 평일 번호(0 = 시작일) ↔ 날짜
@@ -663,6 +700,7 @@ var OWNER_EMAIL = "jungang2620920@onedu.jje.go.kr";
              '<span class="no">' + (isFinal ? '결승 (' + gm.id + '경기) · 3판 2승' : gm.id + '경기') + '</span>' +
              '<span class="tm">' + a + ' <span class="vs-sep">vs</span> ' + b + '</span>' +
              (isFinal && FINAL_NOTE[r.g] ? '<span class="fnote">' + FINAL_NOTE[r.g] + '</span>' : '') +
+             (GAME_NOTE[r.g] && GAME_NOTE[r.g][gm.id] ? '<span class="tnote">시간 변경 · ' + GAME_NOTE[r.g][gm.id] + '</span>' : '') +
            '</' + tag + '>';
   }
 
@@ -675,8 +713,9 @@ var OWNER_EMAIL = "jungang2620920@onedu.jje.go.kr";
         var list = trees[r.g].games.filter(function(gm){ return r.dayOf[gm.id] === d; });
         if (!list.length) return;
         var onlyTbdFinal = list.length === 1 && list[0] === trees[r.g].root && FINAL_NOTE[r.g];
+        var changed = list.some(function(gm){ return GAME_NOTE[r.g] && GAME_NOTE[r.g][gm.id]; });
         h += '<div class="drow"><div class="dlabel"><b>' + r.label + '</b> ' +
-             (onlyTbdFinal ? FINAL_NOTE[r.g] : r.sub + ' · <span class="time">' + r.time + '</span>') + '</div>' +
+             (onlyTbdFinal ? FINAL_NOTE[r.g] : changed ? '<span class="tchg">시간 변경</span>' : r.sub + ' · <span class="time">' + r.time + '</span>') + '</div>' +
              '<div class="dgames">' + list.map(function(gm){ return matchHtml(r, gm); }).join("") + '</div></div>';
       });
       h += '</div>';
